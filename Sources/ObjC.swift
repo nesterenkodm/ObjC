@@ -10,13 +10,33 @@ import Foundation
 
 extension ObjC {
     
+    public enum Error: LocalizedError {
+        case exception(NSException)
+        
+        public var errorDescription: String? {
+            switch self {
+            case .exception(let exception):
+                return exception.description
+            }
+        }
+    }
+    
     public static func catchException(_ body: () throws -> Void) throws {
-        try ObjC.__catchException { errorPointer in
+        var exception: NSException?
+        var error: NSError?
+        
+        ObjC.__catchException({ errorPointer in
             do {
                 try body()
             } catch {
                 errorPointer?.pointee = error as NSError
             }
+        }, error: &error, exception: &exception)
+        
+        if let exception = exception {
+            throw Error.exception(exception)
+        } else if let error = error {
+            throw error
         }
     }
     

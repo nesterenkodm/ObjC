@@ -10,7 +10,9 @@
 
 @implementation ObjC
 
-+ (BOOL)catchException:(NS_NOESCAPE void (^)(NSError *__autoreleasing  _Nullable * _Nullable))tryBlock error:(NSError * _Nullable __autoreleasing *)error {
++ (BOOL)catchException:(NS_NOESCAPE void (^)(NSError *__autoreleasing  _Nullable * _Nullable))tryBlock
+                 error:(NSError * _Nullable __autoreleasing *)error
+             exception:(NSException * _Nullable __autoreleasing *)exception {
     @try {
         NSError *blockError;
         tryBlock(&blockError);
@@ -23,13 +25,9 @@
             return YES;
         }
     }
-    @catch (NSException *exception) {
-        if (error != NULL) {
-            NSMutableDictionary *userInfo = exception.userInfo == nil ? [NSMutableDictionary new] : [exception.userInfo mutableCopy];
-            if (userInfo[NSLocalizedFailureReasonErrorKey] == nil) {
-                userInfo[NSLocalizedFailureReasonErrorKey] = exception.reason;
-            }
-            *error = [[NSError alloc] initWithDomain:exception.name code:0 userInfo:userInfo];
+    @catch (NSException *e) {
+        if (exception != NULL) {
+            *exception = e;
         }
         return NO;
     }

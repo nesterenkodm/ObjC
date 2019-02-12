@@ -28,10 +28,19 @@ class ObjCTests: XCTestCase {
     }
 
     func testRethrowsObjCUnexpectedException() {
-        XCTAssertThrowsError(try ObjC.catchException {
-            let collectionView = UICollectionView()
-            collectionView.insertItems(at: [IndexPath(row: 10, section: 10)])
-        })
+        do {
+            try ObjC.catchException {
+                let collectionView = UICollectionView()
+                collectionView.insertItems(at: [IndexPath(row: 10, section: 10)])
+            }
+        } catch {
+            if case ObjC.Error.exception = error {
+                XCTAssertEqual(error.localizedDescription, "UICollectionView must be initialized with a non-nil layout parameter", "Thrown error localized description must be proxied to NSException description")
+                return
+            }
+            XCTAssert(false, "Thrown error has to be kind of NSException class")
+        }
+        XCTAssert(false, "Should throw NSException error")
     }
     
 }

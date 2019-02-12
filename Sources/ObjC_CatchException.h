@@ -20,7 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
  
  @see https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/improving_objective-c_api_declarations_for_swift
  */
-+ (BOOL)catchException:(NS_NOESCAPE void (^)(NSError * _Nullable * _Nullable error))tryBlock error:(NSError * __autoreleasing *)error NS_REFINED_FOR_SWIFT;
++ (BOOL)catchException:(NS_NOESCAPE void (^)(NSError *__autoreleasing  _Nullable * _Nullable))tryBlock
+                 error:(NSError * _Nullable __autoreleasing * _Nonnull)error
+             exception:(NSException * _Nullable __autoreleasing * _Nonnull)exception NS_REFINED_FOR_SWIFT;
 
 @end
 
